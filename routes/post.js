@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var Post = require("../models/post");
+var Comment = require("../models/comment");
 
 router.get("/list", (req, res, next) => {
   Post.find({}, (err, posts) => {
@@ -26,7 +27,7 @@ router.post("/create", (req, res, next) => {
       console.log(err);
       return next(err);
     }
-    next();
+    res.sendStatus(200);
   });
 });
 
@@ -40,9 +41,18 @@ router.put("/publish", (req, res, next) => {
 });
 
 router.post("/comment", (req, res, next) => {
-  // TODO need Post ID as query. Then mongoose schema Comment.save
-  console.log(req.body); // Contains the query params sent from Postman
-  next();
+  new Comment({
+    username: req.body.username,
+    content: req.body.content,
+    created: new Date(),
+    post: req.body.postId,
+  }).save((err) => {
+    if (err) {
+      console.log(err);
+      return next(err);
+    }
+    res.sendStatus(200);
+  });
 });
 
 module.exports = router;
