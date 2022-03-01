@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var Post = require("../models/post");
 var Comment = require("../models/comment");
+var async = require("async");
 
 router.get("/list", (req, res, next) => {
   Post.find({}, (err, posts) => {
@@ -53,6 +54,22 @@ router.post("/comment", (req, res, next) => {
     }
     res.sendStatus(200);
   });
+});
+
+router.get("/postDetails/:postId", (req, res, next) => {
+  async.parallel(
+    {
+      Post: function (callback) {
+        Post.findById(req.params.postId).exec(callback);
+      },
+      Comments: function (callback) {
+        Comment.find({ post: req.params.postId }).exec(callback);
+      },
+    },
+    (err, results) => {
+      res.json({ post: results.Post, comments: results.Comments });
+    }
+  );
 });
 
 module.exports = router;
