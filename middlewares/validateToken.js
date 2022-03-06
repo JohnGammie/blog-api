@@ -6,7 +6,8 @@ dotenv.config();
 const User = require("../models/user.js");
 
 async function validateToken(req, res, next) {
-  const auhorizationHeader = req.headers.authorization;
+  let auhorizationHeader = req.headers.authorization;
+  auhorizationHeader = auhorizationHeader.replace("Bearer ", ""); // When executing command from Swagger, "Bearer " is appended to the start
   let result;
 
   if (!auhorizationHeader) {
@@ -16,7 +17,7 @@ async function validateToken(req, res, next) {
     });
   }
 
-  const token = req.headers.authorization; //.split(" ")[1];
+  const token = auhorizationHeader; //.split(" ")[1];
 
   const options = {
     expiresIn: "24h",

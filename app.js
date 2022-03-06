@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var dotenv = require("dotenv");
+var cors = require("cors");
 
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -28,6 +29,43 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
+
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
+const swaggerDefinition = {
+  openapi: "3.0.1",
+  info: {
+    title: "Blog-api",
+    version: "1.0.0",
+    description: "An api to view and author Blog posts",
+  },
+  servers: [
+    {
+      url: "http://localhost:3000",
+      description: "Development server",
+    },
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
+};
+
+const options = {
+  swaggerDefinition,
+  // Paths to files containing OpenAPI definitions
+  apis: ["./routes/*.js"],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/users", usersRouter);
 app.use("/about", aboutRouter);

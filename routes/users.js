@@ -8,10 +8,37 @@ const cleanBody = require("../middlewares/cleanBody");
 const generateJWT = require("../middlewares/generateJWT");
 const validateToken = require("../middlewares/validateToken");
 
-router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
-});
-
+/**
+ * @swagger
+ * /users/signup:
+ *  post:
+ *    tags:
+ *    - "users"
+ *    description: sign up new user
+ *    summary: Sign up a new user
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *           type: object
+ *           properties:
+ *            username:
+ *              type: string
+ *              description: username
+ *              example: newuser123
+ *            password:
+ *              type: string
+ *              description: password credential
+ *              example: 123
+ *    responses:
+ *      201:
+ *        description: successfully created new user
+ *      400:
+ *        description: User already exist
+ *      500:
+ *        description: Error signing up
+ */
 router.post("/signup", cleanBody, async (req, res) => {
   try {
     let user = await User.findOne({
@@ -45,6 +72,39 @@ router.post("/signup", cleanBody, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /users/login:
+ *  post:
+ *    tags:
+ *    - "users"
+ *    description: login user
+ *    summary: login user
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *           type: object
+ *           properties:
+ *            username:
+ *              type: string
+ *              description: username
+ *              example: newuser123
+ *            password:
+ *              type: string
+ *              description: password credential
+ *              example: 123
+ *    responses:
+ *      201:
+ *        description: Successful log in
+ *      404:
+ *        description: Account not found
+ *      400:
+ *        description: Invalid password
+ *      500:
+ *        description: Invalid
+ */
 router.post("/login", cleanBody, async (req, res) => {
   try {
     let user = await User.findOne({ username: req.body.username });
@@ -92,6 +152,26 @@ router.post("/login", cleanBody, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /users/logout:
+ *  post:
+ *    tags:
+ *    - "users"
+ *    description: logout user
+ *    summary: logout user
+ *    security:
+ *      - bearerAuth: []
+ *    responses:
+ *      201:
+ *        description: Successful log in
+ *      404:
+ *        description: Account not found
+ *      400:
+ *        description: Invalid password
+ *      500:
+ *        description: Invalid
+ */
 router.post("/logout", validateToken, async (req, res) => {
   try {
     const { username } = req.decoded;
