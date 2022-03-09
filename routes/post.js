@@ -3,10 +3,11 @@ var router = express.Router();
 var Post = require("../models/post");
 var Comment = require("../models/comment");
 var async = require("async");
+const validateToken = require("../middlewares/validateToken");
 
 /**
  * @swagger
- * /post/list:
+ * /post/list/public:
  *  get:
  *    summary: List of all blog posts
  *    description: List of all blog posts
@@ -18,7 +19,29 @@ var async = require("async");
  *            schema:
  *              type: object
  */
-router.get("/list", (req, res, next) => {
+router.get("/list/public", (req, res, next) => {
+  Post.find({ published: true }, (err, posts) => {
+    res.json({ posts: posts });
+  });
+});
+
+/**
+ * @swagger
+ * /post/list/protected:
+ *  get:
+ *    summary: List of all blog posts for an authorized user
+ *    description: List of all blog posts for an authorized user
+ *    security:
+ *      - bearerAuth: []
+ *    responses:
+ *      200:
+ *        description: A list of blog posts
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ */
+router.get("/list/protected", validateToken, (req, res, next) => {
   Post.find({}, (err, posts) => {
     res.json({ posts: posts });
   });
@@ -49,6 +72,8 @@ router.get("/count", function (req, res, next) {
  * /post/create:
  *   post:
  *     summary: Create a new post
+ *     security:
+ *      - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -69,7 +94,7 @@ router.get("/count", function (req, res, next) {
  *                description: Body of the blog post
  *                example: Today's post is bringing great news to fans of javascript!
  */
-router.post("/create", (req, res, next) => {
+router.post("/create", validateToken, (req, res, next) => {
   new Post({
     author: req.body.author,
     title: req.body.title,
@@ -91,6 +116,8 @@ router.post("/create", (req, res, next) => {
  *  put:
  *    summary: Set published of post to true
  *    description:
+ *    security:
+ *      - bearerAuth: []
  *    parameters:
  *      - in: query
  *        name: _id
@@ -107,7 +134,7 @@ router.post("/create", (req, res, next) => {
  *              type: object
  *
  */
-router.put("/publish", (req, res, next) => {
+router.put("/publish", validateToken, (req, res, next) => {
   Post.findByIdAndUpdate(req.query._id, { published: true }, (err, post) => {
     if (err) {
       return next(err);

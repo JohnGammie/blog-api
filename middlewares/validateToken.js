@@ -19,9 +19,7 @@ async function validateToken(req, res, next) {
   auhorizationHeader = auhorizationHeader.replace("Bearer ", ""); // When executing command from Swagger, "Bearer " is appended to the start
   const token = auhorizationHeader; //.split(" ")[1];
 
-  const options = {
-    expiresIn: "24h",
-  };
+  const options = {};
 
   try {
     let user = await User.findOne({
