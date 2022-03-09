@@ -2,75 +2,10 @@
 var express = require("express");
 var router = express.Router();
 const User = require("../models/user");
-const hashPassword = require("./helpers/hashPassword");
 const comparePasswords = require("./helpers/comparePasswords");
 const cleanBody = require("../middlewares/cleanBody");
 const generateJWT = require("../middlewares/generateJWT");
 const validateToken = require("../middlewares/validateToken");
-
-/**
- * @swagger
- * /users/signup:
- *  post:
- *    tags:
- *    - "users"
- *    description: sign up new user
- *    summary: Sign up a new user
- *    requestBody:
- *      required: true
- *      content:
- *        application/json:
- *          schema:
- *           type: object
- *           properties:
- *            username:
- *              type: string
- *              description: username
- *              example: newuser123
- *            password:
- *              type: string
- *              description: password credential
- *              example: 123
- *    responses:
- *      201:
- *        description: successfully created new user
- *      400:
- *        description: User already exist
- *      500:
- *        description: Error signing up
- */
-router.post("/signup", cleanBody, async (req, res) => {
-  try {
-    let user = await User.findOne({
-      username: req.body.username,
-    });
-
-    if (user) {
-      return res.status(400).json({
-        error: true,
-        message: "Username is already in use",
-      });
-    }
-
-    user = req.body;
-
-    const hashedPassword = await hashPassword(req.body.password);
-
-    user.password = hashedPassword;
-
-    const newUser = new User(user);
-
-    await newUser.save();
-
-    return res.status(201).send(newUser);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      error: true,
-      message: "Cannot Sign up",
-    });
-  }
-});
 
 /**
  * @swagger

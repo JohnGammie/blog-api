@@ -43,6 +43,10 @@ const swaggerDefinition = {
   },
   servers: [
     {
+      url: "https://still-atoll-68910.herokuapp.com/",
+      description: "Heroku deployment server",
+    },
+    {
       url: "http://localhost:3000",
       description: "Development server",
     },
