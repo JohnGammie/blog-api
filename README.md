@@ -2,8 +2,34 @@
 
 ## _Backend api of a blog view/creation sites_
 
-Blog-api is a simple backend of api-endpoints to interact with the blog sites Database.
+Blog-api is a simple backend of api-endpoints to interact with the blog site Database.
 
-- Intended to be used by 2 seperate Front-End clients
-  - Author client (make use of JWT protected end points)
-  - Viewing client (allow visitors to view the published blog posts)
+visit _server_/docs for a Swagger description of all endpoints
+
+1 users
+
+- login
+- logout
+
+2 post
+
+- list/public
+- list/protected
+- /count
+- /create
+- /publish
+- /comment
+- postDetails/{postId}
+
+## deployment
+
+`git push heroku main`
+Obviously assuming we want to deploy main to the Heroku server.
+
+## tests
+
+`npm run test` currently using supertest & jest
+
+## current consumers
+
+https://github.com/JohnGammie/blog-api-viewer-react

@@ -216,6 +216,10 @@ router.get("/postDetails/:postId", (req, res, next) => {
       },
     },
     (err, results) => {
+      if (err) {
+        res.sendStatus(404);
+        return next(err);
+      }
       res.json({ post: results.Post, comments: results.Comments });
     }
   );
